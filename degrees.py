@@ -58,18 +58,30 @@ def main():
     directory = sys.argv[1] if len(sys.argv) == 2 else "large"
 
     # Load data from files into memory
-    print("Loading data...")
+    # print("Loading data...")
     load_data(directory)
-    print("Data loaded.")
-
-    source = person_id_for_name(input("Name: "))
+    # print("Data loaded.")
+    print("names")
+    print(names)
+    print("people")
+    print(people)
+    print("movies")
+    print(movies)
+    
+    # source = person_id_for_name(input("Name: "))
+    source = person_id_for_name("kevin bacon")
     if source is None:
         sys.exit("Person not found.")
-    target = person_id_for_name(input("Name: "))
+    # target = person_id_for_name(input("Name: "))
+    target = person_id_for_name("tom hanks")
     if target is None:
         sys.exit("Person not found.")
 
-    path = shortest_path(source, target)
+    # path = shortest_path(source, target)
+    path = []
+    pair = tuple(('112384', '158'))
+    path.append(pair)
+    print(path)
 
     if path is None:
         print("Not connected.")
@@ -77,7 +89,9 @@ def main():
         degrees = len(path)
         print(f"{degrees} degrees of separation.")
         path = [(None, source)] + path
+        print(path)
         for i in range(degrees):
+            print(i)
             person1 = people[path[i][1]]["name"]
             person2 = people[path[i + 1][1]]["name"]
             movie = movies[path[i + 1][0]]["title"]
@@ -102,6 +116,7 @@ def person_id_for_name(name):
     resolving ambiguities as needed.
     """
     person_ids = list(names.get(name.lower(), set()))
+    print(person_ids)
     if len(person_ids) == 0:
         return None
     elif len(person_ids) > 1:

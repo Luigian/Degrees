@@ -61,12 +61,9 @@ def main():
     # print("Loading data...")
     load_data(directory)
     # print("Data loaded.")
-    print("names")
-    print(names)
-    print("people")
-    print(people)
-    print("movies")
-    print(movies)
+    print(f"names\n{names}")
+    print(f"people\n{people}")
+    print(f"movies\n{movies}")
     
     # source = person_id_for_name(input("Name: "))
     source = person_id_for_name("kevin bacon")
@@ -77,11 +74,10 @@ def main():
     if target is None:
         sys.exit("Person not found.")
 
-    # path = shortest_path(source, target)
-    path = []
-    pair = tuple(('112384', '158'))
-    path.append(pair)
-    print(path)
+    print(f"neighbors\n{neighbors_for_person('102')}")
+    path = shortest_path(source, target)
+    path = [('112384', '158')]
+    print(f"path\n{path}")
 
     if path is None:
         print("Not connected.")
@@ -89,9 +85,8 @@ def main():
         degrees = len(path)
         print(f"{degrees} degrees of separation.")
         path = [(None, source)] + path
-        print(path)
+        print(f"path\n{path}")
         for i in range(degrees):
-            print(i)
             person1 = people[path[i][1]]["name"]
             person2 = people[path[i + 1][1]]["name"]
             movie = movies[path[i + 1][0]]["title"]
@@ -106,8 +101,14 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
+    num_explored = 0
+    start = Node(state=source, parent=None, action=None)
+    print(start.state)
+
+    return (start.state)
+    
     # TODO
-    raise NotImplementedError
+    # raise NotImplementedError
 
 
 def person_id_for_name(name):
@@ -116,7 +117,6 @@ def person_id_for_name(name):
     resolving ambiguities as needed.
     """
     person_ids = list(names.get(name.lower(), set()))
-    print(person_ids)
     if len(person_ids) == 0:
         return None
     elif len(person_ids) > 1:

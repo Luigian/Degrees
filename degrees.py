@@ -58,25 +58,29 @@ def main():
     directory = sys.argv[1] if len(sys.argv) == 2 else "large"
 
     # Load data from files into memory
-    # print("Loading data...")
+    print("Loading data...")
     load_data(directory)
-    # print("Data loaded.")
-    print(f"names\n{names}")
-    print(f"people\n{people}")
-    print(f"movies\n{movies}")
+    print("Data loaded.")
     
     # source = person_id_for_name(input("Name: "))
-    source = person_id_for_name("kevin bacon")
+    # source = person_id_for_name("kevin bacon")
+    # source = person_id_for_name("bill paxton")
+    # source = person_id_for_name("emma watson")
+    # source = person_id_for_name("sean connery")
+    source = person_id_for_name("heath ledger")
     if source is None:
         sys.exit("Person not found.")
     # target = person_id_for_name(input("Name: "))
-    target = person_id_for_name("tom hanks")
+    # target = person_id_for_name("tom hanks")
+    # target = person_id_for_name("sally field")
+    # target = person_id_for_name("chris sarandon")
+    # target = person_id_for_name("dustin hoffman")
+    target = person_id_for_name("jennifer lawrence")
+    # target = person_id_for_name("jennifer lopez")
     if target is None:
         sys.exit("Person not found.")
 
-    print(f"neighbors\n{neighbors_for_person('102')}")
     path = shortest_path(source, target)
-    path = [('112384', '158')]
     print(f"path\n{path}")
 
     if path is None:
@@ -103,12 +107,34 @@ def shortest_path(source, target):
 
     num_explored = 0
     start = Node(state=source, parent=None, action=None)
-    print(start.state)
+    frontier = QueueFrontier()
+    frontier.add(start)
+    explored = set()
+    while True:
+        if frontier.empty():
+            return None
+        node = frontier.remove()
+        num_explored += 1
+        if node.state == target:
+            actions = []
+            cells = []
+            while node.parent is not None:
+                actions.append(node.action)
+                cells.append(node.state)
+                node = node.parent
+            actions.reverse()
+            cells.reverse()
+            path = []
+            for i in range(len(actions)):
+                pair = (actions[i], cells[i])
+                path.append(pair)
+            return path
 
-    return (start.state)
-    
-    # TODO
-    # raise NotImplementedError
+        explored.add(node.state)
+        for action, state in neighbors_for_person(node.state):
+            if not frontier.contains_state(state) and state not in explored:
+                child = Node(state=state, parent=node, action=action)
+                frontier.add(child)
 
 
 def person_id_for_name(name):

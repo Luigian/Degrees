@@ -62,26 +62,14 @@ def main():
     load_data(directory)
     print("Data loaded.")
     
-    # source = person_id_for_name(input("Name: "))
-    # source = person_id_for_name("kevin bacon")
-    # source = person_id_for_name("bill paxton")
-    # source = person_id_for_name("emma watson")
-    # source = person_id_for_name("sean connery")
-    source = person_id_for_name("heath ledger")
+    source = person_id_for_name(input("Name: "))
     if source is None:
         sys.exit("Person not found.")
-    # target = person_id_for_name(input("Name: "))
-    # target = person_id_for_name("tom hanks")
-    # target = person_id_for_name("sally field")
-    # target = person_id_for_name("chris sarandon")
-    # target = person_id_for_name("dustin hoffman")
-    target = person_id_for_name("jennifer lawrence")
-    # target = person_id_for_name("jennifer lopez")
+    target = person_id_for_name(input("Name: "))
     if target is None:
         sys.exit("Person not found.")
 
     path = shortest_path(source, target)
-    print(f"path\n{path}")
 
     if path is None:
         print("Not connected.")
@@ -89,7 +77,6 @@ def main():
         degrees = len(path)
         print(f"{degrees} degrees of separation.")
         path = [(None, source)] + path
-        print(f"path\n{path}")
         for i in range(degrees):
             person1 = people[path[i][1]]["name"]
             person2 = people[path[i + 1][1]]["name"]
@@ -104,32 +91,25 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-
     num_explored = 0
     start = Node(state=source, parent=None, action=None)
     frontier = QueueFrontier()
     frontier.add(start)
     explored = set()
+    
     while True:
         if frontier.empty():
             return None
         node = frontier.remove()
         num_explored += 1
         if node.state == target:
-            actions = []
-            cells = []
-            while node.parent is not None:
-                actions.append(node.action)
-                cells.append(node.state)
-                node = node.parent
-            actions.reverse()
-            cells.reverse()
             path = []
-            for i in range(len(actions)):
-                pair = (actions[i], cells[i])
+            while node.parent is not None:
+                pair = (node.action, node.state)
                 path.append(pair)
+                node = node.parent
+            path.reverse()
             return path
-
         explored.add(node.state)
         for action, state in neighbors_for_person(node.state):
             if not frontier.contains_state(state) and state not in explored:

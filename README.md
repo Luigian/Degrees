@@ -4,69 +4,27 @@
 
 <img src="resources/degrees_output.png" width="1000">
 
-When search engines like Google display search results, they do so by placing more “important” and higher-quality pages higher in the search results than less important pages. But how does the search engine know which pages are more important than other pages?
+According to the [Six Degrees of Kevin Bacon][kevin] game, anyone in the Hollywood film industry can be connected to Kevin Bacon within six steps, where each step consists of finding a film that two actors both starred in.
 
-One heuristic might be that an “important” page is one that many other pages link to, since it’s reasonable to imagine that more sites will link to a higher-quality webpage than a lower-quality webpage. We could therefore imagine a system where each page is given a rank according to the number of incoming links it has from other pages, and higher ranks would signal higher importance.
+In this problem, we’re interested in finding the shortest path between any two actors by choosing a sequence of movies that connects them. For example, the shortest path between Jennifer Lawrence and Tom Hanks is 2: Jennifer Lawrence is connected to Kevin Bacon by both starring in “X-Men: First Class,” and Kevin Bacon is connected to Tom Hanks by both starring in “Apollo 13.”
 
-But this definition isn’t perfect: if someone wants to make their page seem more important, then under this system, they could simply create many other pages that link to their desired page to artificially inflate its rank.
-
-For that reason, the PageRank algorithm was created by Google’s co-founders (including Larry Page, for whom the algorithm was named). In PageRank’s algorithm, a website is more important if it is linked to by other important websites, and links from less important websites have their links weighted less. This definition seems a bit circular, but it turns out that there are multiple strategies for calculating these rankings.
-
-**Random Surfer Model**
-
-One way to think about PageRank is with the random surfer model, which considers the behavior of a hypothetical surfer on the internet who clicks on links at random. Consider the corpus of web pages below, where an arrow between two pages indicates a link from one page to another.
-
-<img src="resources/corpus.png" width="185">
-
-The random surfer model imagines a surfer who starts with a web page at random, and then randomly chooses links to follow. If the surfer is on Page 2, for example, they would randomly choose between Page 1 and Page 3 to visit next (duplicate links on the same page are treated as a single link, and links from a page to itself are ignored as well). If they chose Page 3, the surfer would then randomly choose between Page 2 and Page 4 to visit next.
-
-A page’s PageRank, then, can be described as the probability that a random surfer is on that page at any given time. After all, if there are more links to a particular page, then it’s more likely that a random surfer will end up on that page. Moreover, a link from a more important site is more likely to be clicked on than a link from a less important site that fewer pages link to, so this model handles weighting links by their importance as well.
-
-One way to interpret this model is as a **Markov Chain**, where each page represents a state, and each page has a transition model that chooses among its links at random. At each time step, the state switches to one of the pages linked to by the current state.
-
-By sampling states randomly from the Markov Chain, we can get an estimate for each page’s PageRank. We can start by choosing a page at random, then keep following links at random, keeping track of how many times we’ve visited each page. After we’ve gathered all of our samples (based on a number we choose in advance), the proportion of the time we were on each page might be an estimate for that page’s rank.
-
-However, this definition of PageRank proves slightly problematic, if we consider a network of pages like the below.
-
-<img src="resources/network_disconnected.png" width="300">
-
-Imagine we randomly started by sampling Page 5. We’d then have no choice but to go to Page 6, and then no choice but to go to Page 5 after that, and then Page 6 again, and so forth. We’d end up with an estimate of 0.5 for the PageRank for Pages 5 and 6, and an estimate of 0 for the PageRank of all the remaining pages, since we spent all our time on Pages 5 and 6 and never visited any of the other pages.
-
-To ensure we can always get to somewhere else in the corpus of web pages, we’ll introduce to our model a damping factor *d*. With probability *d* (where *d* is usually set around 0.85), the random surfer will choose from one of the links on the current page at random. But otherwise (with probability *1 - d*), the random surfer chooses one out of all of the pages in the corpus at random (including the one they are currently on).
-
-Our random surfer now starts by choosing a page at random, and then, for each additional sample we’d like to generate, chooses a link from the current page at random with probability *d*, and chooses any page at random with probability *1 - d*. If we keep track of how many times each page has shown up as a sample, we can treat the proportion of states that were on a given page as its PageRank.
-
-**Iterative Algorithm**
-
-We can also define a page’s PageRank using a recursive mathematical expression. Let *PR(p)* be the PageRank of a given page *p*: the probability that a random surfer ends up on that page. How do we define *PR(p)*? Well, we know there are two ways that a random surfer could end up on the page:
-
-* With probability *1 - d*, the surfer chose a page at random and ended up on page *p*.
-
-* With probability *d*, the surfer followed a link from a page *i* to page *p*.
-
-The first condition is fairly straightforward to express mathematically: it’s *1 - d* divided by *N*, where *N* is the total number of pages across the entire corpus. This is because the *1 - d* probability of choosing a page at random is split evenly among all *N* possible pages.
-
-For the second condition, we need to consider each possible page *i* that links to page *p*. For each of those incoming pages, let *NumLinks(i)* be the number of links on page *i*. Each page *i* that links to *p* has its own PageRank, *PR(i)*, representing the probability that we are on page *i* at any given time. And since from page *i* we travel to any of that page’s links with equal probability, we divide *PR(i)* by the number of links *NumLinks(i)* to get the probability that we were on page *i* and chose the link to page *p*.
-
-This gives us the following definition for the PageRank for a page *p*.
-
-<img src="resources/formula.png" width="300">
-
-In this formula, *d* is the damping factor, *N* is the total number of pages in the corpus, *i* ranges over all pages that link to page *p*, and *NumLinks(i)* is the number of links present on page *i*.
-
-How would we go about calculating PageRank values for each page, then? We can do so via iteration: start by assuming the PageRank of every page is *1 / N* (i.e., equally likely to be on any page). Then, use the above formula to calculate new PageRank values for each page, based on the previous PageRank values. If we keep repeating this process, calculating a new set of PageRank values for each page based on the previous set of PageRank values, eventually the PageRank values will converge (i.e., not change by more than a small threshold with each iteration).
-
-This project, implement both such approaches for calculating PageRank – calculating both by sampling pages from a Markov Chain random surfer and by iteratively applying the PageRank formula.
+We can frame this as a search problem: our states are people. Our actions are movies, which take us from one actor to another (it’s true that a movie could take us to multiple different actors, but that’s okay for this problem). Our initial state and goal state are defined by the two people we’re trying to connect. By using breadth-first search, we can find the shortest path from one actor to another.
 
 ## Implementation
 
-In `pagerank.py`, there's first the definition of two constants at the top of the file: `DAMPING` represents the damping factor and is initially set to 0.85. `SAMPLES` represents the number of samples we’ll use to estimate PageRank using the sampling method, initially set to 10,000 samples.
+Inside the `degrees` directory there are two sets of CSV data files: one set in the `large` directory and one set in the `small` directory. Each contains files with the same names, and the same structure, but `small` is a much smaller dataset for ease of testing and experimentation.
 
-Now, the `main` function expects a command-line argument, which will be the name of a directory of a corpus of web pages we’d like to compute PageRanks for. The `crawl` function takes that directory, parses all of the HTML files in the directory, and returns a dictionary representing the corpus. The keys in that dictionary represent pages (e.g., `"2.html"`), and the values of the dictionary are a set of all of the pages linked to by the key (e.g. `{"1.html", "3.html"}`).
+Each dataset consists of three CSV files. A CSV file is a way of organizing data in a text-based format: each row corresponds to one data entry, with commas in the row separating the values for that entry.
 
-The `main` function then calls the `sample_pagerank` function, whose purpose is to estimate the PageRank of each page by sampling. The function takes as arguments the corpus of pages generated by `crawl`, as well as the damping factor and number of samples to use. Ultimately, `sample_pagerank` should return a dictionary where the keys are each page name and the values are each page’s estimated PageRank (a number between 0 and 1).
+In `small/people.csv`, each person has a unique `id`, corresponding with their `id` in [IMDb][imdb]’s database. They also have a `name`, and a `birth` year.
 
-The `main` function also calls the `iterate_pagerank` function, which will also calculate PageRank for each page, but using the iterative formula method instead of by sampling. The return value is in the same format, and the output of these two functions is similar when given the same corpus.
+Next, in `small/movies.csv`, each movie also has a unique `id`, in addition to a `title` and the `year` in which the movie was released.
+
+Now, `small/stars.csv` establishes a relationship between the people in `people.csv` and the movies in `movies.csv`. Each row is a pair of a `person_id` value and `movie_id` value. The first row (ignoring the header), for example, states that the person with `id` 102 starred in the movie with `id` 104257. Checking that against `people.csv` and `movies.csv`, we’ll find that this line is saying that Kevin Bacon starred in the movie “A Few Good Men.”
+
+Next, in `degrees.py`, at the top, several data structures are defined to store information from the CSV files. The `names` dictionary is a way to look up a person by their name: it maps names to a set of corresponding ids (because it’s possible that multiple actors have the same name). The `people` dictionary maps each person’s id to another dictionary with values for the person’s name, birth year, and the set of all the movies they have starred in. And the movies dictionary maps each movie’s id to another dictionary with values for that movie’s title, release year, and the set of all the movie’s stars. The `load_data` function loads data from the CSV files into these data structures.
+
+The `main` function in this program first loads data into memory (the directory from which the data is loaded can be specified by a command-line argument). Then, the function prompts the user to type in two names. The `person_id_for_name` function retrieves the id for any person (and handles prompting the user to clarify, in the event that multiple people have the same name). The function then calls the `shortest_path` function to compute the shortest path between the two people, and prints out the path.
 
 ### Choosing randomly among a page's links, or from any of the pages in the corpus
 
@@ -152,6 +110,8 @@ This process repeats until no PageRank value changes by more than 0.001 between 
 
 A project from the course [CS50's Introduction to Artificial Intelligence with Python 2020][cs50 ai] from HarvardX.
 
+[kevin]: https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon
+[imdb]: https://www.imdb.com/
 [cs50 lecture]: https://youtu.be/uQmYZTTqDC0?t=5553
 [linkedin]: https://www.linkedin.com/in/luis-sanchez-13bb3b189/
 [cs50 ai]: https://cs50.harvard.edu/ai/2020/

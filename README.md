@@ -36,7 +36,7 @@ The `shortest_path` function returns the shortest path from the person with id `
 
 * If there are multiple paths of minimum length from the `source` to the `target`, this function returns any of them.
 
-* If there is no possible path between two actors, this function returns None.
+* If there is no possible path between two actors, this function returns `None`.
 
 * This function call the `neighbors_for_person` function, which accepts a person’s id as input, and returns a set of `(movie_id, person_id)` pairs for all people who starred in a movie with a given person.
 

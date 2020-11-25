@@ -8,9 +8,10 @@ According to the [Six Degrees of Kevin Bacon][kevin] game, anyone in the Hollywo
 
 In this problem, we’re interested in finding the shortest path between any two actors by choosing a sequence of movies that connects them. For example, the shortest path between Jennifer Lawrence and Tom Hanks is 2: Jennifer Lawrence is connected to Kevin Bacon by both starring in “X-Men: First Class,” and Kevin Bacon is connected to Tom Hanks by both starring in “Apollo 13.”
 
+<img src="resources/degrees-1.png" width="400">
+
 We can frame this as a search problem: our states are people. Our actions are movies, which take us from one actor to another (it’s true that a movie could take us to multiple different actors, but that’s okay for this problem). Our initial state and goal state are defined by the two people we’re trying to connect. By using breadth-first search, we can find the shortest path from one actor to another.
 
-<img src="resources/degrees-1.png" width="400">
 <img src="resources/degrees-2.gif" width="400">
 
 ## Implementation
@@ -42,6 +43,8 @@ The `shortest_path` function returns the shortest path from the person with id `
 * If there is no possible path between two actors, this function returns `None`.
 
 * This function call the `neighbors_for_person` function, which accepts a person’s id as input, and returns a set of `(movie_id, person_id)` pairs for all people who starred in a movie with a given person.
+
+<img src="resources/degrees-3.gif" width="400">
 
 In order to improve the efficiency of the search, this function checks for a goal as nodes are added to the frontier: if we detect a goal node, we don't add it to the frontier, we simply return the solution immediately.
 

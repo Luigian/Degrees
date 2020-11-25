@@ -62,7 +62,7 @@ The file `util.py` contains the class implementations for `Node`, `StackFrontier
 ## Credits
 [*Luis Sanchez*][linkedin] 2020.
 
-A project from the course [CS50's Introduction to Artificial Intelligence with Python 2020][cs50 ai] from HarvardX.
+Project and images from the course [CS50's Introduction to Artificial Intelligence with Python 2020][cs50 ai] from HarvardX.
 
 [kevin]: https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon
 [imdb]: https://www.imdb.com/

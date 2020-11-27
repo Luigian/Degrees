@@ -14,6 +14,42 @@ We can frame this as a search problem: our states are people. Our actions are mo
 
 <img src="resources/degrees-2.gif" width="400">
 
+## Solving Search Problems
+
+The *solution* is a sequence of actions that leads from the initial state to the goal state. The *optimal solution* is a solution that has the lowest path cost among all solutions.
+
+In a search process, data is often stored in a *node*, a data structure that contains the following data:
+
+* A *state*.
+* Its *parent node*, through which the current node was generated.
+* The *action* that was applied to the state of the parent to get to the current node.
+* The *path cost* from the initial state to this node.
+
+Nodes contain information that makes them very useful for the purposes of search algorithms. They contain a state, which can be checked using the goal test to see if it is the final state. If it is, the node’s path cost can be compared to other nodes’ path costs, which allows choosing the optimal solution. Once the node is chosen, by virtue of storing the parent node and the action that led from the parent to the current node, it is possible to trace back every step of the way from the initial state to this node, and this sequence of actions is the solution.
+
+However, nodes are simply a data structure — they don’t search, they hold information. To actually search, we use the **frontier**, the mechanism that “manages” the nodes. The frontier starts by containing an initial state and an empty *set of explored items*, and then repeats the following actions until a solution is reached:
+
+1) If the frontier is empty, stop because there is no solution to the problem.
+2) Remove a node from the frontier. This is the node that will be considered.
+3) If the node contains the goal state, then return the solution and stop.
+4) Else, expand the node (find all the new nodes that could be reached from this node), and add resulting nodes to the frontier. Also, add the current node to the explored set.
+
+At step two, which node should be removed? This choice has implications on the quality of the solution and how fast it is achieved. There are multiple ways to go about the question of which nodes should be considered first, two of which can be represented by the data structures of **stack** (in depth-first search) and **queue** (in breadth-first search).
+
+**Depth-First Search**
+
+A depth-first search algorithm exhausts each one direction before trying another direction. In these cases, the frontier is managed as a stack data structure, “last-in first-out.” After nodes are being added to the frontier, the first node to remove and consider is the last one to be added. This results in a search algorithm that goes as deep as possible in the first direction that gets in its way while leaving all other directions for later.
+
+At best, this algorithm is the fastest. If it “lucks out” and always chooses the right path to the solution (by chance), then depth-first search takes the least possible time to get to a solution. But it is possible that the found solution is not optimal. At worst, this algorithm will explore every possible path before finding the solution, thus taking the longest possible time before reaching the solution.
+
+**Breadth-First Search**
+
+A breadth-first search algorithm will follow multiple directions at the same time, taking one step in each possible direction before taking the second step in each direction. In this case, the frontier is managed as a queue data structure, “first-in first-out.” In this case, all the new nodes add up in line, and nodes are being considered based on which one was added first (first come first served). This results in a search algorithm that takes one step in each possible direction before taking a second step in any one direction.
+
+This algorithm is guaranteed to find the optimal solution. This algorithm is almost guaranteed to take longer than the minimal time to run. At worst, this algorithm takes the longest possible time to run.
+
+<img src="resources/degrees-3.gif" width="400">
+
 ## Implementation
 
 Inside the `degrees` directory there are two sets of CSV data files: one set in the `large` directory and one set in the `small` directory. Each contains files with the same names, and the same structure, but `small` is a much smaller dataset for ease of testing and experimentation.
@@ -43,8 +79,6 @@ The `shortest_path` function returns the shortest path from the person with id `
 * If there is no possible path between two actors, this function returns `None`.
 
 * This function call the `neighbors_for_person` function, which accepts a person’s id as input, and returns a set of `(movie_id, person_id)` pairs for all people who starred in a movie with a given person.
-
-<img src="resources/degrees-3.gif" width="400">
 
 In order to improve the efficiency of the search, this function checks for a goal as nodes are added to the frontier: if we detect a goal node, we don't add it to the frontier, we simply return the solution immediately.
 

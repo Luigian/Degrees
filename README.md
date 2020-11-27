@@ -8,11 +8,9 @@ According to the [Six Degrees of Kevin Bacon][kevin] game, anyone in the Hollywo
 
 In this problem, we’re interested in finding the shortest path between any two actors by choosing a sequence of movies that connects them. For example, the shortest path between Jennifer Lawrence and Tom Hanks is 2: Jennifer Lawrence is connected to Kevin Bacon by both starring in “X-Men: First Class,” and Kevin Bacon is connected to Tom Hanks by both starring in “Apollo 13.”
 
-<img src="resources/degrees-1.png" width="400">
-
 We can frame this as a search problem: our states are people. Our actions are movies, which take us from one actor to another (it’s true that a movie could take us to multiple different actors, but that’s okay for this problem). Our initial state and goal state are defined by the two people we’re trying to connect. By using breadth-first search, we can find the shortest path from one actor to another.
 
-<img src="resources/degrees-2.gif" width="400">
+<img src="resources/degrees-1.png" width="400">
 
 ## Solving Search Problems
 
@@ -47,6 +45,8 @@ At best, this algorithm is the fastest. If it “lucks out” and always chooses
 A breadth-first search algorithm will follow multiple directions at the same time, taking one step in each possible direction before taking the second step in each direction. In this case, the frontier is managed as a queue data structure, “first-in first-out.” In this case, all the new nodes add up in line, and nodes are being considered based on which one was added first (first come first served). This results in a search algorithm that takes one step in each possible direction before taking a second step in any one direction.
 
 This algorithm is guaranteed to find the optimal solution. This algorithm is almost guaranteed to take longer than the minimal time to run. At worst, this algorithm takes the longest possible time to run.
+
+<img src="resources/degrees-2.gif" width="400">
 
 <img src="resources/degrees-3.gif" width="400">
 

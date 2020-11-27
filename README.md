@@ -32,6 +32,8 @@ However, nodes are simply a data structure — they don’t search, they hold in
 3) If the node contains the goal state, then return the solution and stop.
 4) Else, expand the node (find all the new nodes that could be reached from this node), and add resulting nodes to the frontier. Also, add the current node to the explored set.
 
+<img src="resources/degrees-3.gif" width="400">
+
 At step two, which node should be removed? This choice has implications on the quality of the solution and how fast it is achieved. There are multiple ways to go about the question of which nodes should be considered first, two of which can be represented by the data structures of **stack** (in depth-first search) and **queue** (in breadth-first search).
 
 **Depth-First Search**
@@ -44,11 +46,9 @@ At best, this algorithm is the fastest. If it “lucks out” and always chooses
 
 A breadth-first search algorithm will follow multiple directions at the same time, taking one step in each possible direction before taking the second step in each direction. In this case, the frontier is managed as a queue data structure, “first-in first-out.” In this case, all the new nodes add up in line, and nodes are being considered based on which one was added first (first come first served). This results in a search algorithm that takes one step in each possible direction before taking a second step in any one direction.
 
-This algorithm is guaranteed to find the optimal solution. This algorithm is almost guaranteed to take longer than the minimal time to run. At worst, this algorithm takes the longest possible time to run.
-
 <img src="resources/degrees-2.gif" width="400">
 
-<img src="resources/degrees-3.gif" width="400">
+This algorithm is guaranteed to find the optimal solution. This algorithm is almost guaranteed to take longer than the minimal time to run. At worst, this algorithm takes the longest possible time to run.
 
 ## Implementation
 
